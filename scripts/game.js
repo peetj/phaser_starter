@@ -27,6 +27,10 @@ function update() {
   if (cursors.right.isDown) player.x +=2;
   if (cursors.up.isDown) player.y -=2;
   if (cursors.down.isDown) player.y +=2;
+
+  if(enemy && Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 32) {
+    killPlayer();
+  }
 }
 
 new Phaser.Game(config);
@@ -41,3 +45,11 @@ function spawnEnemy(scene) {
   enemy = scene.add.sprite(x, y, 'enemy');
 }
 
+function killPlayer() {
+  isPlayerAlive = false;
+  enemy.setTint(0xff0000);
+  player.scene.time.delayedCall(1000, () => {
+    enemy.destroy();
+    alert("Game Over! You caught the enemy.");
+  });
+}
