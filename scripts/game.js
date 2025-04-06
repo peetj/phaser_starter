@@ -11,10 +11,15 @@ let gameOverText, playAgainButton;
 let score = 0;
 let scoreText;
 let enemyKilled = false;
+let roundTime = 10000;
+let minTime = 3000;
+let timerEvent;
+let coundownText;
 
 function preload() {
   this.load.image('player', 'assets/images/player.png');
   this.load.image('enemy', 'assets/images/enemy.png');
+  this.load.image('skull', 'assets/images/human-skull.png');
 }
 
 function create() {
@@ -22,6 +27,7 @@ function create() {
   cursors = this.input.keyboard.createCursorKeys();
 
   scoreText = this.add.text(16, 16, `Lifetime Score: ${score}`, { fontSize: '32px', fill: '#fff' });
+  coundownText = this.add.text(16, 50, '', { fontSize: '24px', fill: '#ffcc00' });
 
   this.time.delayedCall(1000, () => {
     spawnEnemy(this);
@@ -50,14 +56,52 @@ function spawnEnemy(scene) {
 
   enemy = scene.add.sprite(x, y, 'enemy');
   enemyKilled = false;
+
+  // Start countdown
+  let timeLeft = roundTime/1000;
+  coundownText.setText(`Time Left: ${timeLeft}s`);
+
+  timerEvent = scene.time.delayedCall(roundTime, () => {
+    if (!enemyKilled) {
+      score = Math.max(0, score - 10);
+      scoreText.setText(`Lifetime Score: ${score}`);
+      
+      // Replace player sprite with skull
+      const x = player.x;
+      const y = player.y;
+      player.destroy();
+      player = scene.add.sprite(x, y, 'skull');
+  
+      showGameOver(scene);
+    }
+  });
+  
+
+  // Countdown timer
+  scene.time.addEvent({
+    delay: 1000,
+    repeat: timeLeft - 1,
+    callback: () => {
+      timeLeft --;
+      coundownText.setText(`Time Left: ${timeLeft}s`);
+    },    
+  });
+
+  // Speed up future rounds
+  roundTime = Math.max(minTime, roundTime - 1000);
 }
 
 function killEnemy(scene) {
   enemyKilled = true;
   enemy.setTint(0xff0000);
 
+  if (timerEvent) {
+    timerEvent.remove(false);
+  }
+
   score += 10;
   scoreText.setText(`Lifetime Score: ${score}`);
+  coundownText.setText('');
   
   scene.time.delayedCall(1000, () => {
     showGameOver(scene);
