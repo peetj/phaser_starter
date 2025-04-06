@@ -7,6 +7,7 @@ const config = {
 };
 
 let player, cursors, enemy;
+let gameOverText, playAgainButton;
 
 function preload() {
   this.load.image('player', 'assets/images/player.png');
@@ -29,7 +30,7 @@ function update() {
   if (cursors.down.isDown) player.y +=2;
 
   if(enemy && Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 32) {
-    killPlayer();
+    killEnemy(this);
   }
 }
 
@@ -45,11 +46,19 @@ function spawnEnemy(scene) {
   enemy = scene.add.sprite(x, y, 'enemy');
 }
 
-function killPlayer() {
-  isPlayerAlive = false;
+function killEnemy(scene) {
   enemy.setTint(0xff0000);
-  player.scene.time.delayedCall(1000, () => {
-    enemy.destroy();
-    alert("Game Over! You caught the enemy.");
+  
+  scene.time.delayedCall(1000, () => {
+    showGameOver(scene);
+  });
+}
+
+function showGameOver(scene) {
+  gameOverText = scene.add.text(400, 300, 'Game Over', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+  playAgainButton = scene.add.text(400, 350, 'Play Again', { fontSize: '24px', fill: '#fff000' }).setOrigin(0.5);
+  playAgainButton.setInteractive();
+  playAgainButton.on('pointerdown', () => {
+    scene.scene.restart();
   });
 }
