@@ -15,6 +15,8 @@ let roundTime = 10000;
 let minTime = 3000;
 let timerEvent;
 let coundownText;
+let enemyVelocity = { x: 1, y: 1 };
+
 
 function preload() {
   this.load.image('player', 'assets/images/player.png');
@@ -43,6 +45,19 @@ function update() {
   if(enemy && !enemyKilled &&Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y) < 32) {
     killEnemy(this);
   }
+
+  if (enemy && !enemyKilled) {
+    enemy.x += enemyVelocity.x;
+    enemy.y += enemyVelocity.y;
+  
+    // Bounce off walls
+    if (enemy.x <= 0 || enemy.x >= config.width) {
+      enemyVelocity.x *= -1;
+    }
+    if (enemy.y <= 0 || enemy.y >= config.height) {
+      enemyVelocity.y *= -1;
+    }
+  }  
 }
 
 new Phaser.Game(config);
@@ -55,6 +70,9 @@ function spawnEnemy(scene) {
   } while (Math.abs(x - player.x) < 200 || Math.abs(y - player.y) < 200);
 
   enemy = scene.add.sprite(x, y, 'enemy');
+  // Random velocity between -2 and 2, avoiding 0
+  enemyVelocity.x = Phaser.Math.Between(1, 2) * Phaser.Math.RND.sign();
+  enemyVelocity.y = Phaser.Math.Between(1, 2) * Phaser.Math.RND.sign();
   enemyKilled = false;
 
   // Start countdown
