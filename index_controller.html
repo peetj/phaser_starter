@@ -4,25 +4,14 @@
   <meta charset="UTF-8">
   <title>Phaser Starter Game</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #280707;
-    }
-    canvas {
-      display: block;
-      margin: 0 auto;
-    }
+    body { margin: 0; padding: 0; background: #280707; }
+    canvas { display: block; margin: 0 auto; }
   </style>
 </head>
 <body>
-  <div id="arduino-controls" style="text-align: center; margin-top: 10px;">
-    <button id="connect-button">Connect to Device</button>
-    <div id="status-bar" style="color: #ccc;">Status: Disconnected</div>
-  </div>
-  
-  <!-- Game will be injected into the body -->
+  <!-- Arduino controls container will be created dynamically -->
   <script src="scripts/phaser.min.js"></script>
+  <script src="scripts/arduino_controller.js"></script>
   <script src="scripts/game_controller.js"></script>
 </body>
 </html>
