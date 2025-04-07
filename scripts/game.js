@@ -22,6 +22,9 @@ function preload() {
   this.load.image('player', 'assets/images/player.png');
   this.load.image('enemy', 'assets/images/enemy.png');
   this.load.image('skull', 'assets/images/human-skull.png');
+
+  this.load.audio('bgMusic', 'assets/sounds/icecastle.ogg');
+
 }
 
 function create() {
@@ -34,6 +37,9 @@ function create() {
   this.time.delayedCall(1000, () => {
     spawnEnemy(this);
   });
+
+  this.bgMusic = this.sound.add('bgMusic');
+  this.bgMusic.play({ loop: true }); // loop optional
 }
 
 function update() {
@@ -133,4 +139,8 @@ function showGameOver(scene) {
   playAgainButton.on('pointerdown', () => {
     scene.scene.restart();
   });
+  if (scene.bgMusic && scene.bgMusic.stop) {
+    scene.bgMusic.stop();
+  }
+  
 }
